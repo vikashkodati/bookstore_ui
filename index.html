@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<head>
+
+  <script   src="https://code.jquery.com/jquery-2.2.4.min.js"   ></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" ></script>
+        <link rel="stylesheet" type="text/css"  href="style.css" />
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+
+<body  ng-app="myApp">
+
+<div class="container-fluid" ng-controller="namesCtrl">
+  
+    <nav class="navbar navbar-inverse">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-3">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Brand</a>
+        </div>
+    
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="navbar-collapse-3">
+          <ul class="nav navbar-nav navbar-right">
+           
+            <li>
+              <a class="btn btn-default btn-outline btn-circle collapsed"  ng-click="createBook(addBook,addAuthor);reloadPage();" data-toggle="collapse" href="" aria-expanded="false" aria-controls="nav-collapse3">Add Book</a>
+            </li>
+          </ul>
+<!--           <div class="collapse nav navbar-nav nav-collapse slide-down" id="nav-collapse3">
+ -->            <form class="navbar-form navbar-right" role="search">
+              <div class="form-group">
+                <input type="text" class="form-control" name ="bookname" ng-model="addBook" placeholder="Add Book Name"  />
+                <input type="text" class="form-control" name ="author" ng-model="addAuthor" placeholder="Add Author"  />
+
+              </div>
+              <!-- <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button> -->
+            </form>
+<!--           </div>
+ -->        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+    <div class="row">
+        <ul class="thumbnails" ng-repeat="x in names">
+            <div class="col-md-3">
+                <div class="thumbnail">
+                    <div class="caption">
+                         <h3 class="truncate">{{x.bookname}}</h3>
+                        <p>{{x.author}}</p>
+                        <button class="btn btn-primary btn-block" data-toggle="modal" data-target="#myModalHorizontal" ng-click="getBook(x.id,x.bookname,x.author)">Edit</button>
+                        <button class="btn btn-danger btn-block"  ng-click="deleteBook(x.id);reloadPage();">Delete</button>
+
+                        <div class="modal fade" id="myModalHorizontal" tabindex="-1" role="dialog" 
+                               aria-labelledby="myModalLabel" aria-hidden="true">
+                              <div class="modal-dialog">
+                                  <div class="modal-content">
+                                      <!-- Modal Header -->
+                                      <div class="modal-header">
+                                          <button type="button" class="close" 
+                                             data-dismiss="modal">
+                                                 <span aria-hidden="true">&times;</span>
+                                                 <span class="sr-only">Close</span>
+                                          </button>
+                                          <h4 class="modal-title" id="myModalLabel">
+                                              Book Update
+                                          </h4>
+                                      </div>
+                                      
+                                      <!-- Modal Body -->
+                                      <div class="modal-body">
+                                          
+                                          <form class="form-horizontal" role="form">
+                                            <div class="form-group">
+                                              <label  class="col-sm-2 control-label"
+                                                        for="inputEmail3">Book ID</label>
+                                              <div class="col-sm-10">
+                                                  <input type="text" class="form-control" readonly ng-model = "id" placeholder="Book Id"/>
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label  class="col-sm-2 control-label"
+                                                        for="inputEmail3">Book Name</label>
+                                              <div class="col-sm-10">
+                                                  <input type="text" class="form-control" ng-model = "bookname" placeholder="Book Name"/>
+                                              </div>
+                                            </div>
+                                            <div class="form-group">
+                                              <label class="col-sm-2 control-label"
+                                                    for="inputPassword3" >Author</label>
+                                              <div class="col-sm-10">
+                                                  <input type="test" class="form-control" ng-model = "author" placeholder="Author"/>
+                                              </div>
+                                            </div>
+
+                                            <button type="button" class="btn btn-default"
+                                                  data-dismiss="modal">
+                                                      Close
+                                          </button>
+                                          <button type="button" class="btn btn-primary" ng-click="updateBook(id,bookname,author);reloadPage();">
+                                              Save changes
+                                          </button>
+                                          
+                                          </form>
+                                      </div>
+                                      
+                                      <!-- Modal Footer -->
+                                    
+                                  </div>
+                              </div>
+                          </div>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </ul>
+    </div>
+</div><!-- /.container-fluid -->
+
+
+<script>
+angular.module('myApp', []).controller('namesCtrl', function($scope,$http,$window,$location) {
+
+   //$scope.names = [{"id":1,"bookname":"WingsofFire","author":"AbdulKalam"},{"id":3,"bookname":"sample","author":"sunny"}];
+    $http.get("http://54.149.209.162:8080/allBooks")
+    .then(function(response) {
+        $scope.names = response.data;
+        console.log("this is data",response.data);
+    });
+    
+
+    $scope.getBook = function(id,bookname,author){
+    // $http.get("http://localhost:8097/getByBookname?bookname="+bookname)
+    //  .then(function(response) {
+    //   console.log("this is the inside the function");
+
+    //     $scope.bookinfo = response.data;
+    //      console.log("this is bookinfo",response.data);
+    //  });
+
+      $scope.id = id;
+      $scope.bookname = bookname;
+      $scope.author = author;
+    }
+
+    $scope.updateBook = function(id,bookname, author){
+    console.log("this is the inside the posu function");
+     var data = "id="+id+"&bookname="+bookname+"&author="+author;     
+        $http.post("http://54.149.209.162:8080/update?id="+id+"&bookname="+bookname+"&author="+author, data).success(function(data, status) {
+            $scope.updatedBook = data;
+            $scope.reloadPage();
+            console.log("this is post result",$scope.updatedBook);
+        })
+    }
+
+    $scope.createBook = function(bookname, author){
+   
+    console.log("this is the inside the posu function");
+     var data = "bookname="+bookname+"&author="+author; 
+        $http.post("http://54.149.209.162:8080/create?bookname="+bookname+"&author="+author, data).success(function(data, status) {
+            $scope.addedBook = data;
+            $scope.reloadPage();
+            console.log("this is post result",$scope.addedBook);
+        })
+    }
+
+
+    $scope.deleteBook = function(id){
+    
+     var data = "id="+id;
+        
+        $http.delete("http://54.149.209.162:8080/delete?id="+id, data).then(
+       function(response){
+         //$scope.reloadPage();
+
+       }, 
+       function(response){
+         // failure call back
+       }
+    );
+    }
+
+    $scope.reloadPage = function(){window.location.reload();}
+
+});
+</script>
+
+</body>
+</html>
